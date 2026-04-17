@@ -1,0 +1,70 @@
+{
+  "entities": {
+    "GrammarCreation": {
+      "title": "Grammar Creation",
+      "description": "A grammar instruction page created by a user.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title of the grammar page."
+        },
+        "description": {
+          "type": "string",
+          "description": "A short summary of the page content."
+        },
+        "elements": {
+          "type": "array",
+          "description": "A list of UI elements that make up the page.",
+          "items": {
+            "type": "object"
+          }
+        },
+        "authorId": {
+          "type": "string",
+          "description": "The Firebase Auth UID of the creator."
+        },
+        "authorName": {
+          "type": "string",
+          "description": "The name of the creator."
+        },
+        "isPublic": {
+          "type": "boolean",
+          "description": "Whether the creation is shared publicly."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of last update."
+        }
+      },
+      "required": ["title", "authorId", "elements"]
+    },
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Private profile information for a user.",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" }
+      },
+      "required": ["email"]
+    }
+  },
+  "firestore": {
+    "/creations/{creationId}": {
+      "schema": "GrammarCreation",
+      "description": "The main collection of grammar instruction pages."
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Private user profiles."
+    }
+  }
+}

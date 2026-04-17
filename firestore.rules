@@ -1,0 +1,86 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: creations
+    // Document ID: auto-generated
+    // Fields:
+    //   - title: string (min: 1, max: 200)
+    //   - description: string (max: 1000)
+    //   - elements: list (size: <= 100)
+    //   - authorId: string (UID, immutable)
+    //   - authorName: string (max: 100)
+    //   - isPublic: bool
+    //   - createdAt: timestamp (immutable)
+    //   - updatedAt: timestamp
+    //
+    // Collection: users
+    // Document ID: userId (UID)
+    // Fields:
+    //   - displayName: string
+    //   - email: string (PII)
+    //   - photoURL: string
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.authorId;
+    }
+
+    function isValidString(val, min, max) {
+      return val is string && val.size() >= min && val.size() <= max;
+    }
+
+    function isValidCreation(data) {
+      return data.keys().hasAll(['title', 'authorId', 'elements', 'isPublic', 'createdAt', 'updatedAt']) &&
+             isValidString(data.title, 1, 200) &&
+             data.authorId == request.auth.uid &&
+             data.elements is list && data.elements.size() <= 100 &&
+             data.isPublic is bool &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      // PII Protection: Only owners can read/write their profile
+      allow read, write: if isOwner(userId);
+    }
+
+    match /creations/{creationId} {
+      // Publicly shared creations can be read by anyone
+      // Non-public ones only by the owner
+      allow read: if resource.data.isPublic == true || (isAuthenticated() && resource.data.authorId == request.auth.uid);
+      
+      // Creating requires being the author
+      allow create: if isAuthenticated() && isValidCreation(request.resource.data);
+      
+      // Updating requires being the owner and preserving immutable fields
+      allow update: if isDocOwner() && 
+                    isValidCreation(request.resource.data) &&
+                    request.resource.data.authorId == resource.data.authorId &&
+                    request.resource.data.createdAt == resource.data.createdAt;
+      
+      // Deleting requires being the owner
+      allow delete: if isDocOwner();
+    }
+  }
+}

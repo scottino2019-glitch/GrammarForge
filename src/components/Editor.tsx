@@ -116,11 +116,12 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
         pdf.save(`${page.title || 'grammar-page'}.pdf`);
       } catch (error) {
         console.error('PDF Export Error:', error);
+        alert('Errore tecnico durante la generazione del PDF. Controlla di non avere troppi elementi pesanti.');
       } finally {
         setExporting(false);
         if (!wasPreview) setIsPreview(false);
       }
-    }, 800);
+    }, 1200);
   };
 
   const exportHTML = () => {
@@ -273,32 +274,31 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
           <div className="flex items-center gap-2 lg:gap-3">
             <button 
               onClick={() => setIsPreview(!isPreview)}
-              className={`p-2 border-2 border-border transition-all flex items-center gap-2 font-black uppercase text-[10px] ${isPreview ? 'bg-accent-yellow' : 'bg-white hover:bg-stone-50'}`}
+              disabled={exporting}
+              className={`p-2 border-2 border-border transition-all flex items-center gap-2 font-black uppercase text-[10px] ${isPreview ? 'bg-accent-yellow' : 'bg-white hover:bg-stone-50'} ${exporting ? 'opacity-50' : ''}`}
               title={isPreview ? "Torna all'Editor" : "Anteprima Finale"}
             >
               <Eye size={14} /> <span className="hidden md:inline">{isPreview ? 'Edit' : 'Anteprima'}</span>
             </button>
 
-            {!isPreview && (
-              <div className="flex items-center gap-2 border-l-2 border-border/10 pl-3">
-                <button 
-                  onClick={exportPDF} 
-                  disabled={exporting}
-                  className="p-2 border-2 border-border bg-white hover:bg-stone-50 transition-all flex items-center gap-2 font-black uppercase text-[10px] disabled:opacity-50"
-                  title="Scarica PDF"
-                >
-                  <Download size={14} className={exporting ? 'animate-bounce' : ''} /> 
-                  <span className="hidden md:inline">{exporting ? 'Export...' : 'PDF'}</span>
-                </button>
-                <button 
-                  onClick={exportHTML} 
-                  className="p-2 border-2 border-border bg-white hover:bg-stone-50 transition-all flex items-center gap-2 font-black uppercase text-[10px]"
-                  title="Scarica HTML"
-                >
-                  <FileCode size={14} /> <span className="hidden md:inline">HTML</span>
-                </button>
-              </div>
-            )}
+            <div className="flex items-center gap-2 border-l-2 border-border/10 pl-3">
+              <button 
+                onClick={exportPDF} 
+                disabled={exporting}
+                className="p-2 border-2 border-border bg-white hover:bg-stone-50 transition-all flex items-center gap-2 font-black uppercase text-[10px] disabled:opacity-50"
+                title="Scarica PDF"
+              >
+                <Download size={14} className={exporting ? 'animate-bounce' : ''} /> 
+                <span className="hidden md:inline">{exporting ? 'Generazione...' : 'PDF'}</span>
+              </button>
+              <button 
+                onClick={exportHTML} 
+                className="p-2 border-2 border-border bg-white hover:bg-stone-50 transition-all flex items-center gap-2 font-black uppercase text-[10px]"
+                title="Scarica HTML"
+              >
+                <FileCode size={14} /> <span className="hidden md:inline">HTML</span>
+              </button>
+            </div>
 
             <div className="flex items-center gap-3 border-l-2 border-border/10 pl-3">
               {saveStatus !== 'idle' && (

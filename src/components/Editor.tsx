@@ -98,36 +98,61 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
     // Give more time for the layout to stabilize and animations to finish
     setTimeout(async () => {
       try {
-        const canvas = await html2canvas(canvasRef.current!, {
-          scale: 1, // Start with lower scale for stability
+        const element = canvasRef.current;
+        if (!element) return;
+
+        const canvas = await html2canvas(element, {
+          scale: 1.5,
           useCORS: true,
           backgroundColor: '#F4F4F2',
           logging: false,
-          imageTimeout: 15000,
-          onclone: (doc) => {
-            // Remove any classes that might interfere during the clone
-            const el = doc.querySelector('.bg-dots');
-            if (el) (el as HTMLElement).style.background = '#F4F4F2';
+          imageTimeout: 20000,
+          windowWidth: 1200, // Force a desktop-like width for the capture
+          onclone: (clonedDoc) => {
+            // Force-disable all animations and transitions in the clone
+            const style = clonedDoc.createElement('style');
+            style.innerHTML = `
+              * { 
+                transition: none !important; 
+                animation: none !important; 
+                transform: none !important; 
+                box-shadow: none !important;
+              }
+              .bg-dots { background: #F4F4F2 !important; }
+              header h1 { letter-spacing: -1px !important; }
+            `;
+            clonedDoc.head.appendChild(style);
+            
+            // Fix potential viewport issues in the clone
+            const clonedCanvas = clonedDoc.querySelector('.max-w-4xl');
+            if (clonedCanvas) {
+              (clonedCanvas as HTMLElement).style.width = '900px';
+              (clonedCanvas as HTMLElement).style.maxWidth = 'none';
+            }
           }
         });
         
-        const imgData = canvas.toDataURL('image/jpeg', 0.85); // Use JPEG for smaller size
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        const imgData = canvas.toDataURL('image/jpeg', 0.82);
+        const pdf = new jsPDF({
+          orientation: 'p',
+          unit: 'mm',
+          format: 'a4',
+          compress: true
+        });
         
-        // If the height exceeds a single page, we just scale it or handle multi-page (keeping it simple for now)
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'MEDIUM');
         pdf.save(`${page.title || 'grammar-page'}.pdf`);
       } catch (error) {
         console.error('PDF Export Error:', error);
-        alert('Errore nella creazione del PDF. Prova a rinfrescare la pagina o a ridurre la complessità della scheda.');
+        alert('Si è verificato un errore durante la creazione del PDF. Se il problema persiste, prova a usare la funzione "Stampa" del tuo browser e seleziona "Salva come PDF".');
       } finally {
         setExporting(false);
         if (!wasPreview) setIsPreview(false);
       }
-    }, 1500);
+    }, 1800);
   };
 
   const exportHTML = () => {

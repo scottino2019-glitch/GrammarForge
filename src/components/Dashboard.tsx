@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { db, collection, query, where, onSnapshot, orderBy } from '../firebase';
+import { useState, useEffect, FC } from 'react';
+import { db, collection, query, where, onSnapshot, orderBy, deleteDoc, doc, handleFirestoreError, OperationType } from '../firebase';
 import { User } from 'firebase/auth';
 import { GrammarPage } from '../types';
-import { motion } from 'motion/react';
-import { FileText, Globe, Clock, User as UserIcon, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { FileText, Globe, Clock, User as UserIcon, ArrowRight, Trash2, AlertCircle } from 'lucide-react';
 
 interface DashboardProps {
   user: User | null;
@@ -14,6 +14,7 @@ interface DashboardProps {
 
 export default function Dashboard({ user, publicCreations, onOpen, onCreate }: DashboardProps) {
   const [myCreations, setMyCreations] = useState<GrammarPage[]>([]);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -27,9 +28,20 @@ export default function Dashboard({ user, publicCreations, onOpen, onCreate }: D
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setMyCreations(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as GrammarPage)));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, "creations");
     });
     return () => unsubscribe();
   }, [user]);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, "creations", id));
+      setDeletingId(null);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `creations/${id}`);
+    }
+  };
 
   return (
     <div className="space-y-12">
@@ -76,7 +88,13 @@ export default function Dashboard({ user, publicCreations, onOpen, onCreate }: D
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {myCreations.map((page) => (
-                <CreationCard key={page.id} page={page} onClick={() => onOpen(page)} />
+                <CreationCard 
+                  key={page.id} 
+                  page={page} 
+                  onClick={() => onOpen(page)} 
+                  onDelete={() => setDeletingId(page.id!)}
+                  showDelete
+                />
               ))}
             </div>
           )}
@@ -104,21 +122,71 @@ export default function Dashboard({ user, publicCreations, onOpen, onCreate }: D
           )}
         </section>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deletingId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm">
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white border-4 border-border p-8 max-w-sm w-full shadow-[12px_12px_0px_0px_rgba(26,26,26,1)]"
+            >
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600">
+                  <AlertCircle size={32} />
+                </div>
+                <h3 className="font-black uppercase text-xl tracking-tight">Elimina Progetto?</h3>
+                <p className="text-ink/60 text-sm font-medium">Questa azione è irreversibile. Sei sicuro di volerlo eliminare?</p>
+                <div className="flex gap-4 w-full pt-4">
+                  <button 
+                    onClick={() => setDeletingId(null)}
+                    className="flex-1 px-4 py-3 border-2 border-border font-black uppercase text-[10px] hover:bg-stone-50"
+                  >
+                    Annulla
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(deletingId)}
+                    className="flex-1 px-4 py-3 bg-red-600 text-white border-2 border-border font-black uppercase text-[10px] hover:bg-red-700"
+                  >
+                    Elimina
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-function CreationCard({ page, onClick }: { page: GrammarPage; onClick: () => void; key?: string }) {
+interface CreationCardProps {
+  page: GrammarPage;
+  onClick: () => void;
+  onDelete?: () => void;
+  showDelete?: boolean;
+}
+
+const CreationCard: FC<CreationCardProps> = ({ 
+  page, 
+  onClick, 
+  onDelete,
+  showDelete = false
+}) => {
   return (
     <motion.div 
-      whileHover={{ x: 4 }}
-      onClick={onClick}
-      className="bg-white group cursor-pointer border-2 border-border p-5 hover:bg-bg transition-all flex items-start gap-4 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] hover:shadow-none translate-x-[-2px] translate-y-[-2px] active:translate-x-0 active:translate-y-0"
+      whileHover={{ y: -2 }}
+      className="bg-white group border-2 border-border p-5 hover:bg-bg transition-all flex items-start gap-4 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] hover:shadow-none translate-x-[-2px] translate-y-[-2px] active:translate-x-0 active:translate-y-0"
     >
-      <div className="w-10 h-10 bg-ink flex-shrink-0 flex items-center justify-center text-white">
+      <div 
+        onClick={onClick}
+        className="w-10 h-10 bg-ink flex-shrink-0 flex items-center justify-center text-white cursor-pointer"
+      >
         <FileText size={20} />
       </div>
-      <div className="flex-grow min-w-0">
+      <div className="flex-grow min-w-0 cursor-pointer" onClick={onClick}>
         <h3 className="font-black uppercase text-xs tracking-tight text-ink truncate">{page.title}</h3>
         <p className="text-[11px] font-medium text-ink/60 truncate mt-1 lowercase">{page.description || 'no description'}</p>
         <div className="flex items-center gap-4 mt-3 text-[9px] font-black uppercase tracking-widest text-ink/30">
@@ -130,8 +198,18 @@ function CreationCard({ page, onClick }: { page: GrammarPage; onClick: () => voi
           </span>
         </div>
       </div>
-      <div className="flex-shrink-0">
-        <ArrowRight size={14} className="text-ink/20 group-hover:text-ink transition-colors" />
+      <div className="flex flex-col gap-2">
+        {showDelete && (
+          <button 
+            onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
+            className="p-1.5 text-ink/20 hover:text-red-600 transition-colors"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
+        <button onClick={onClick} className="p-1.5 text-ink/20 group-hover:text-ink transition-colors">
+          <ArrowRight size={14} />
+        </button>
       </div>
     </motion.div>
   );

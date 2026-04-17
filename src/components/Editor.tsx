@@ -22,6 +22,7 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
   const [isPreview, setIsPreview] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const addElement = (type: ElementType) => {
@@ -90,22 +91,36 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
 
   const exportPDF = async () => {
     if (!canvasRef.current) return;
+    setExporting(true);
+    const wasPreview = isPreview;
     setIsPreview(true);
-    // Wait for the UI to update to preview mode
+    
+    // Wait longer for the UI to update to preview mode and for fonts/assets to settle
     setTimeout(async () => {
-      const canvas = await html2canvas(canvasRef.current!, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#F4F4F2'
-      });
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`${page.title || 'grammar-page'}.pdf`);
-    }, 100);
+      try {
+        const canvas = await html2canvas(canvasRef.current!, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#F4F4F2',
+          logging: false,
+          allowTaint: true
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+        pdf.save(`${page.title || 'grammar-page'}.pdf`);
+      } catch (error) {
+        console.error('PDF Export Error:', error);
+      } finally {
+        setExporting(false);
+        if (!wasPreview) setIsPreview(false);
+      }
+    }, 800);
   };
 
   const exportHTML = () => {
@@ -268,10 +283,12 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
               <div className="flex items-center gap-2 border-l-2 border-border/10 pl-3">
                 <button 
                   onClick={exportPDF} 
-                  className="p-2 border-2 border-border bg-white hover:bg-stone-50 transition-all flex items-center gap-2 font-black uppercase text-[10px]"
+                  disabled={exporting}
+                  className="p-2 border-2 border-border bg-white hover:bg-stone-50 transition-all flex items-center gap-2 font-black uppercase text-[10px] disabled:opacity-50"
                   title="Scarica PDF"
                 >
-                  <Download size={14} /> <span className="hidden md:inline">PDF</span>
+                  <Download size={14} className={exporting ? 'animate-bounce' : ''} /> 
+                  <span className="hidden md:inline">{exporting ? 'Export...' : 'PDF'}</span>
                 </button>
                 <button 
                   onClick={exportHTML} 

@@ -95,33 +95,39 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
     const wasPreview = isPreview;
     setIsPreview(true);
     
-    // Wait longer for the UI to update to preview mode and for fonts/assets to settle
+    // Give more time for the layout to stabilize and animations to finish
     setTimeout(async () => {
       try {
         const canvas = await html2canvas(canvasRef.current!, {
-          scale: 2,
+          scale: 1, // Start with lower scale for stability
           useCORS: true,
           backgroundColor: '#F4F4F2',
           logging: false,
-          allowTaint: true
+          imageTimeout: 15000,
+          onclone: (doc) => {
+            // Remove any classes that might interfere during the clone
+            const el = doc.querySelector('.bg-dots');
+            if (el) (el as HTMLElement).style.background = '#F4F4F2';
+          }
         });
         
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL('image/jpeg', 0.85); // Use JPEG for smaller size
         const pdf = new jsPDF('p', 'mm', 'a4');
         const imgProps = pdf.getImageProperties(imgData);
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
         
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+        // If the height exceeds a single page, we just scale it or handle multi-page (keeping it simple for now)
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
         pdf.save(`${page.title || 'grammar-page'}.pdf`);
       } catch (error) {
         console.error('PDF Export Error:', error);
-        alert('Errore tecnico durante la generazione del PDF. Controlla di non avere troppi elementi pesanti.');
+        alert('Errore nella creazione del PDF. Prova a rinfrescare la pagina o a ridurre la complessità della scheda.');
       } finally {
         setExporting(false);
         if (!wasPreview) setIsPreview(false);
       }
-    }, 1200);
+    }, 1500);
   };
 
   const exportHTML = () => {

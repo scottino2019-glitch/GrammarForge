@@ -11,6 +11,9 @@
   --color-accent-yellow: #FFD54F;
   --color-accent-blue: #D1E9FF;
   --color-accent-green: #D4EDDA;
+  --color-accent-red: #FF4D4D;
+  
+  --sidebar-width: 280px;
 }
 
 @layer base {
@@ -32,6 +35,14 @@
   .bg-dots {
     background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
     background-size: 24px 24px;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 border-2 border-transparent transition-all font-black uppercase text-[10px] tracking-widest text-ink/40 hover:text-ink hover:bg-white hover:border-border;
+  }
+
+  .sidebar-link-active {
+    @apply text-ink bg-white border-border;
   }
 
   @media print {

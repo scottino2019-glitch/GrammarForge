@@ -97,31 +97,34 @@ export default function App() {
   return (
     <div className="min-h-screen bg-bg text-ink font-sans selection:bg-accent-yellow">
       {/* Header */}
-      <nav className="border-b-2 border-border bg-white sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-[60px] flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIsEditing(false)}>
-            <div className="font-black text-xl tracking-tighter uppercase">
-              GrammarForge <span className="font-light">v1.0</span>
+      <nav className="border-b-4 border-ink bg-white sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-[72px] flex items-center justify-between">
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setIsEditing(false)}>
+            <div className="bg-accent-pink p-1 border-3 border-ink shadow-hard-sm group-hover:rotate-12 transition-transform">
+               <BookOpen size={24} strokeWidth={3} className="text-white" />
+            </div>
+            <div className="font-black text-2xl tracking-tighter uppercase leading-none">
+              GrammarForge <span className="text-accent-pink">STUDIO</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-6">
             {user ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <button 
                   onClick={startNew}
-                  className="flex items-center gap-2 bg-ink text-white px-5 py-2 border-2 border-border font-bold text-xs uppercase hover:bg-zinc-800 transition-all"
+                  className="flex items-center gap-2 bg-accent-lime text-ink px-6 py-2.5 border-3 border-ink font-black text-xs uppercase hover:bg-lime-400 transition-all shadow-hard-sm active:shadow-none"
                 >
-                  <Plus size={14} /> Nuovo
+                  <Plus size={16} strokeWidth={3} /> Nuovo
                 </button>
                 <div className="flex items-center gap-2 group cursor-pointer relative">
-                  <img src={user.photoURL || ''} alt="" className="w-8 h-8 border-2 border-border" referrerPolicy="no-referrer" />
-                  <div className="hidden group-hover:block absolute right-0 top-full pt-2">
+                  <img src={user.photoURL || ''} alt="" className="w-10 h-10 border-3 border-ink rounded-full shadow-hard-sm hover:scale-110 transition-transform" referrerPolicy="no-referrer" />
+                  <div className="hidden group-hover:block absolute right-0 top-full pt-4">
                     <button 
                       onClick={handleLogout}
-                      className="bg-white border-2 border-border shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] px-4 py-2 text-xs font-bold uppercase flex items-center gap-2 hover:bg-stone-50 transition-all whitespace-nowrap"
+                      className="bg-white border-3 border-ink shadow-hard p-4 py-3 text-[11px] font-black uppercase flex items-center gap-3 hover:bg-accent-pink hover:text-white transition-all whitespace-nowrap -rotate-2"
                     >
-                      <LogOut size={12} /> Esci
+                      <LogOut size={14} strokeWidth={3} /> Esci
                     </button>
                   </div>
                 </div>
@@ -129,9 +132,9 @@ export default function App() {
             ) : (
               <button 
                 onClick={handleLogin}
-                className="flex items-center gap-2 border-2 border-border bg-white px-5 py-2 font-bold text-xs uppercase hover:bg-stone-50 transition-all"
+                className="flex items-center gap-3 border-3 border-ink bg-white px-6 py-2.5 font-black text-xs uppercase hover:bg-accent-cyan transition-all shadow-hard-sm active:shadow-none"
               >
-                <LogIn size={14} /> Accedi
+                <LogIn size={16} strokeWidth={3} /> Accedi
               </button>
             )}
           </div>

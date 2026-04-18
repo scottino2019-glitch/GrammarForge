@@ -249,17 +249,17 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
       {/* Tools Sidebar */}
       {!isPreview && (
         <aside className="w-full lg:w-64 lg:sticky lg:top-[84px] space-y-6 no-print">
-          <div className="bg-[#EBEBE9] border-2 border-border p-5 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]">
-            <h3 className="text-[10px] uppercase tracking-widest text-ink/50 font-black mb-4">Elementi</h3>
-            <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
+          <div className="bg-accent-yellow border-3 border-ink p-6 shadow-hard -rotate-1">
+            <h3 className="text-[11px] uppercase tracking-widest text-ink font-black mb-5 border-b-2 border-ink pb-2">📦 Elementi</h3>
+            <div className="grid grid-cols-2 lg:grid-cols-1 gap-3">
               {tools.map((tool) => (
                 <button
                   key={tool.type}
                   onClick={() => addElement(tool.type as ElementType)}
-                  className="flex items-center gap-3 w-full p-2 border border-border bg-white hover:bg-zinc-100 transition-all text-ink group shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:shadow-none translate-x-[-2px] translate-y-[-2px] active:translate-x-0 active:translate-y-0"
+                  className="flex items-center gap-3 w-full p-2.5 border-3 border-ink bg-white hover:bg-accent-cyan transition-all text-ink group shadow-hard-sm active:shadow-none translate-x-[-2px] translate-y-[-2px] active:translate-x-0 active:translate-y-0"
                 >
-                  <div className="w-7 h-7 flex items-center justify-center text-ink/40 group-hover:text-ink">
-                    <tool.icon size={14} />
+                  <div className="w-7 h-7 flex items-center justify-center text-ink group-hover:scale-125 transition-transform">
+                    <tool.icon size={16} strokeWidth={3} />
                   </div>
                   <span className="text-[11px] font-black uppercase tracking-tight">{tool.label}</span>
                 </button>
@@ -267,22 +267,22 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
             </div>
           </div>
 
-          <div className="bg-[#EBEBE9] border-2 border-border p-5 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]">
-            <h3 className="text-[10px] uppercase tracking-widest text-ink/50 font-black mb-4">Configurazione</h3>
-            <div className="space-y-2">
+          <div className="bg-white border-3 border-ink p-6 shadow-hard rotate-1">
+            <h3 className="text-[11px] uppercase tracking-widest text-ink font-black mb-5 border-b-2 border-ink pb-2">⚙️ Config</h3>
+            <div className="space-y-3">
               <button 
                 onClick={() => setPage(p => ({ ...p, layout: p.layout === 'single' ? 'double' : 'single' }))}
-                className="flex items-center gap-3 w-full p-2 border border-border bg-white hover:bg-zinc-100 transition-all font-black uppercase text-[10px] active:shadow-none translate-x-[-1px] translate-y-[-1px] active:translate-x-0 active:translate-y-0"
+                className="flex items-center gap-3 w-full p-2.5 border-3 border-ink bg-accent-orange text-white hover:bg-orange-600 transition-all font-black uppercase text-[10px] shadow-hard-sm active:shadow-none translate-x-[-1px] translate-y-[-1px] active:translate-x-0 active:translate-y-0"
               >
-                {page.layout === 'double' ? <Columns size={14} /> : <Square size={14} />}
+                {page.layout === 'double' ? <Columns size={16} strokeWidth={3} /> : <Square size={16} strokeWidth={3} />}
                 {page.layout === 'double' ? 'Griglia 2 Col' : 'Lista Singola'}
               </button>
                <button 
                 onClick={() => setPage(p => ({ ...p, isPublic: !p.isPublic }))}
-                className="flex items-center gap-3 w-full p-2 border border-border bg-white hover:bg-zinc-100 transition-all font-black uppercase text-[10px] active:shadow-none translate-x-[-1px] translate-y-[-1px] active:translate-x-0 active:translate-y-0"
+                className="flex items-center gap-3 w-full p-2.5 border-3 border-ink bg-accent-cyan text-ink hover:bg-cyan-300 transition-all font-black uppercase text-[10px] shadow-hard-sm active:shadow-none translate-x-[-1px] translate-y-[-1px] active:translate-x-0 active:translate-y-0"
               >
-                <Share2 size={14} className={page.isPublic ? 'text-accent-blue' : ''} />
-                {page.isPublic ? 'Pubblico' : 'Privato'}
+                <Share2 size={16} strokeWidth={3} />
+                {page.isPublic ? 'Visibile a Tutti' : 'Solo per Me'}
               </button>
             </div>
           </div>
@@ -292,64 +292,49 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
       {/* Main Canvas Area */}
       <div className="flex-grow w-full space-y-8">
         {/* Editor Toolbar */}
-        <div className="bg-white border-2 border-border p-4 flex items-center justify-between shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] no-print">
+        <div className="bg-white border-4 border-ink p-5 flex items-center justify-between shadow-hard no-print">
           <div className="flex items-center gap-4 flex-grow max-w-md">
             <input 
               value={page.title}
               onChange={(e) => setPage(p => ({ ...p, title: e.target.value }))}
               readOnly={isPreview}
-              className={`text-2xl font-black uppercase tracking-tighter bg-transparent border-none focus:ring-0 p-0 w-full ${isPreview ? 'cursor-default' : ''}`}
-              placeholder="Titolo lezione..."
+              className={`text-3xl font-black uppercase tracking-tighter bg-transparent border-none focus:ring-0 p-0 w-full placeholder:text-ink/10 ${isPreview ? 'cursor-default' : ''}`}
+              placeholder="NOME LEZIONE"
             />
           </div>
-          <div className="flex items-center gap-2 lg:gap-3">
+          <div className="flex items-center gap-2 lg:gap-4">
             <button 
               onClick={() => setIsPreview(!isPreview)}
               disabled={exporting}
-              className={`p-2 border-2 border-border transition-all flex items-center gap-2 font-black uppercase text-[10px] ${isPreview ? 'bg-accent-yellow' : 'bg-white hover:bg-stone-50'} ${exporting ? 'opacity-50' : ''}`}
-              title={isPreview ? "Torna all'Editor" : "Anteprima Finale"}
+              className={`p-3 border-3 border-ink transition-all flex items-center gap-2 font-black uppercase text-[11px] shadow-hard-sm active:shadow-none ${isPreview ? 'bg-accent-yellow' : 'bg-white hover:bg-accent-cyan'} ${exporting ? 'opacity-50' : ''}`}
             >
-              <Eye size={14} /> <span className="hidden md:inline">{isPreview ? 'Edit' : 'Anteprima'}</span>
+              <Eye size={18} strokeWidth={3} /> <span className="hidden md:inline">{isPreview ? 'Torna a Edit' : 'Anteprima'}</span>
             </button>
 
-            <div className="flex items-center gap-2 border-l-2 border-border/10 pl-3">
+            <div className="flex items-center gap-2 border-l-4 border-ink/10 pl-4">
               <button 
                 onClick={exportPDF} 
                 disabled={exporting}
-                className="p-2 border-2 border-border bg-white hover:bg-stone-50 transition-all flex items-center gap-2 font-black uppercase text-[10px] disabled:opacity-50"
-                title="Scarica PDF"
+                className="p-3 border-3 border-ink bg-white hover:bg-accent-lime transition-all flex items-center gap-2 font-black uppercase text-[11px] shadow-hard-sm active:shadow-none disabled:opacity-50"
               >
-                <Download size={14} className={exporting ? 'animate-bounce' : ''} /> 
-                <span className="hidden md:inline">{exporting ? 'Generazione...' : 'PDF'}</span>
-              </button>
-              <button 
-                onClick={exportHTML} 
-                className="p-2 border-2 border-border bg-white hover:bg-stone-50 transition-all flex items-center gap-2 font-black uppercase text-[10px]"
-                title="Scarica HTML"
-              >
-                <FileCode size={14} /> <span className="hidden md:inline">HTML</span>
+                <Download size={18} strokeWidth={3} className={exporting ? 'animate-bounce' : ''} /> 
+                <span className="hidden md:inline">{exporting ? 'Wait...' : 'PDF'}</span>
               </button>
             </div>
 
-            <div className="flex items-center gap-3 border-l-2 border-border/10 pl-3">
-              {saveStatus !== 'idle' && (
-                <span className="text-[9px] uppercase font-black text-ink/40 mr-1 flex items-center gap-1">
-                  {saveStatus === 'saving' && 'Sync...'}
-                  {saveStatus === 'success' && <><Check size={10} className="text-green-600" /> Ok</>}
-                </span>
-              )}
+            <div className="flex items-center gap-4 border-l-4 border-ink/10 pl-4">
               <button 
                 onClick={handleSave}
                 disabled={saving}
-                className="bg-ink text-white px-5 py-2 border-2 border-border font-black text-[10px] uppercase hover:bg-zinc-800 disabled:opacity-50 transition-all"
+                className="bg-accent-pink text-white px-8 py-3 border-3 border-ink font-black text-[12px] uppercase hover:bg-red-600 shadow-hard-sm active:shadow-none disabled:opacity-50 transition-all"
               >
-                Salva
+                {saving ? '...' : 'Salva'}
               </button>
               <button 
                 onClick={onClose}
-                className="p-1 text-ink/40 hover:text-ink transition-colors"
+                className="p-2 bg-white border-3 border-ink hover:bg-red-500 hover:text-white transition-all shadow-hard-sm active:shadow-none"
               >
-                <X size={20} />
+                <X size={24} strokeWidth={4} />
               </button>
             </div>
           </div>
@@ -358,19 +343,23 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
         {/* The Page - Bento Canvas */}
         <div 
           ref={canvasRef}
-          className={`bg-[#FDFDFC] border-2 border-border p-8 md:p-12 shadow-[12px_12px_0px_0px_rgba(26,26,26,1)] bg-dots min-h-[90vh] transition-all ${isPreview ? 'shadow-none md:p-16' : ''}`}
+          className={`bg-white border-4 border-ink p-10 md:p-14 shadow-hard bg-dots min-h-[90vh] transition-all relative overflow-hidden ${isPreview ? 'shadow-none md:p-20' : ''}`}
         >
-          <div className="max-w-4xl mx-auto space-y-12">
-            <header className="space-y-4 text-center pb-10 border-b-2 border-border/10">
-               <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.85]">{page.title}</h1>
+          {/* Decorative Corner Elements */}
+          <div className="absolute top-0 right-0 w-24 h-24 bg-accent-yellow border-b-4 border-l-4 border-ink rotate-45 translate-x-12 -translate-y-12"></div>
+          <div className="absolute bottom-0 left-0 w-16 h-16 bg-accent-cyan border-t-4 border-r-4 border-ink -rotate-45 -translate-x-8 translate-y-8"></div>
+
+          <div className="max-w-4xl mx-auto space-y-16 relative z-10">
+            <header className="space-y-6 text-center pb-12 border-b-4 border-ink/20">
+               <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.8] mb-4 bg-accent-yellow inline-block px-4 border-3 border-ink shadow-hard-sm -rotate-1">{page.title}</h1>
                {isPreview ? (
-                 <p className="w-full text-center font-medium text-ink/60 text-lg">{page.description}</p>
+                 <p className="w-full text-center font-black text-ink/70 text-xl tracking-tight">{page.description}</p>
                ) : (
                  <textarea 
                   value={page.description}
                   onChange={(e) => setPage(p => ({ ...p, description: e.target.value }))}
-                  className="w-full text-center bg-transparent border-none focus:ring-0 font-medium text-ink/60 text-lg resize-none min-h-[3rem]"
-                  placeholder="Aggiungi descrizione..."
+                  className="w-full text-center bg-white border-3 border-ink p-4 shadow-hard focus:ring-0 font-black text-ink text-xl resize-none min-h-[4rem]"
+                  placeholder="SOTTOTITOLO O DESCRIZIONE..."
                  />
                )}
             </header>

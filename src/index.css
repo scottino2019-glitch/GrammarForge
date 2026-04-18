@@ -5,26 +5,37 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Courier Prime", monospace;
   
-  --color-bg: #F4F4F2;
-  --color-ink: #1A1A1A;
-  --color-border: #1A1A1A;
-  --color-accent-yellow: #FFD54F;
-  --color-accent-blue: #D1E9FF;
-  --color-accent-green: #D4EDDA;
+  --color-bg: #FFFFFF;
+  --color-ink: #000000;
+  --color-border: #000000;
+  
+  /* Neobrutalist Palette */
+  --color-accent-yellow: #FFFF00; /* Pure Yellow */
+  --color-accent-pink: #FF00FF;   /* Magenta */
+  --color-accent-cyan: #00FFFF;   /* Cyan */
+  --color-accent-lime: #00FF00;   /* Lime */
+  --color-accent-orange: #FF8800; /* Bold Orange */
+  
+  --shadow-hard: 6px 6px 0px 0px rgba(0,0,0,1);
+  --shadow-hard-sm: 3px 3px 0px 0px rgba(0,0,0,1);
 }
 
 @layer base {
   body {
-    @apply bg-bg text-ink font-sans;
+    @apply bg-bg text-ink font-sans selection:bg-accent-pink selection:text-white;
   }
 
-  /* Bento Card Style */
+  /* Bento Card Style - Revolutionized */
   .bento-card {
-    @apply bg-white border-2 border-border p-5 relative transition-all;
+    @apply bg-white border-3 border-border p-6 relative transition-all shadow-hard hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)];
   }
 
   .bento-label {
-    @apply absolute -top-2.5 left-2.5 bg-ink text-white text-[10px] font-black px-2 py-0.5 uppercase tracking-wider z-10;
+    @apply absolute -top-3 left-4 bg-ink text-white text-[11px] font-black px-3 py-1 uppercase tracking-widest z-10 border-2 border-ink;
+  }
+
+  button {
+    @apply cursor-pointer active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all;
   }
 }
 

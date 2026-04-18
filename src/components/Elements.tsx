@@ -15,11 +15,11 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
       case 'text-box':
         return (
           <>
-            <div className="bento-label">Testo</div>
+            <div className="bento-label bg-accent-cyan text-ink border-2 border-ink">Testo</div>
             <textarea
               value={element.content}
               onChange={(e) => onUpdate(element.id, e.target.value)}
-              className="w-full bg-transparent border-none focus:ring-0 p-0 text-ink leading-relaxed resize-none min-h-[4rem] font-medium"
+              className="w-full bg-transparent border-none focus:ring-0 p-0 text-ink leading-relaxed resize-none min-h-[4rem] font-black"
               placeholder="Scrivi qui il tuo testo..."
             />
           </>
@@ -28,12 +28,12 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
       case 'example-single':
         return (
           <>
-            <div className="bento-label">Esempio</div>
-            <div className="bg-[#FAFAFA] border-l-4 border-border p-4">
+            <div className="bento-label bg-accent-yellow text-ink border-2 border-ink">Esempio</div>
+            <div className="bg-accent-yellow/10 border-l-8 border-ink p-4 shadow-hard-sm">
               <input
                 value={element.content}
                 onChange={(e) => onUpdate(element.id, e.target.value)}
-                className="w-full bg-transparent border-none focus:ring-0 p-0 font-bold italic text-ink"
+                className="w-full bg-transparent border-none focus:ring-0 p-0 font-black italic text-ink text-lg"
                 placeholder="Esempio singolo..."
               />
             </div>
@@ -44,11 +44,11 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
         const examples = Array.isArray(element.content) ? element.content : [''];
         return (
           <>
-            <div className="bento-label">Esempi</div>
-            <div className="space-y-3">
+            <div className="bento-label bg-accent-orange text-white border-2 border-ink">Esempi</div>
+            <div className="space-y-4">
               {examples.map((ex, idx) => (
-                <div key={idx} className="flex items-center gap-3 group/ex">
-                  <span className="text-[10px] font-black uppercase text-ink/20">Ex {idx + 1}</span>
+                <div key={idx} className="flex items-center gap-4 group/ex">
+                  <span className="text-[12px] font-black bg-ink text-white w-8 h-8 flex items-center justify-center rotate-3">{idx + 1}</span>
                   <input
                     value={ex}
                     onChange={(e) => {
@@ -56,13 +56,13 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
                       newEx[idx] = e.target.value;
                       onUpdate(element.id, newEx);
                     }}
-                    className="flex-grow bg-transparent border-none focus:ring-0 p-0 text-sm font-medium text-ink"
+                    className="flex-grow bg-white border-3 border-ink p-2 shadow-hard-sm focus:ring-0 focus:translate-x-0.5 focus:translate-y-0.5 focus:shadow-none transition-all font-bold text-ink"
                     placeholder="Aggiungi esempio..."
                   />
                   {idx === examples.length - 1 && ex && (
                     <button 
                       onClick={() => onUpdate(element.id, [...examples, ''])}
-                      className="w-5 h-5 border border-border flex items-center justify-center text-[10px] bg-white hover:bg-zinc-50 font-black"
+                      className="w-8 h-8 border-3 border-ink flex items-center justify-center text-lg bg-accent-cyan hover:bg-cyan-400 font-black shadow-hard-sm"
                     >
                       +
                     </button>
@@ -77,36 +77,36 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
         const vig = element.content as VignetteData;
         return (
           <>
-            <div className="bento-label">Dialogo</div>
-            <div className="space-y-4 pt-2">
-              <div className="flex flex-col gap-1 items-start">
+            <div className="bento-label bg-accent-pink text-white border-2 border-ink">Dialogo</div>
+            <div className="space-y-6 pt-4">
+              <div className="flex flex-col gap-2 items-start">
                 <input 
                   placeholder="A" 
                   value={vig.speaker1}
                   onChange={(e) => onUpdate(element.id, { ...vig, speaker1: e.target.value })}
-                  className="font-black text-[9px] uppercase bg-ink text-white px-2 py-0.5"
+                  className="font-black text-[11px] uppercase bg-ink text-white px-3 py-1 border-2 border-ink shadow-hard-sm -rotate-2"
                 />
-                <div className="bubble bubble-left bg-accent-blue border-2 border-border p-3 rounded-2xl flex-grow font-medium w-full">
+                <div className="bubble bubble-left bg-accent-cyan border-3 border-ink p-4 shadow-hard font-black w-full">
                   <textarea 
                     value={vig.text1}
                     onChange={(e) => onUpdate(element.id, { ...vig, text1: e.target.value })}
-                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm resize-none"
+                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm resize-none placeholder:text-ink/30"
                     placeholder="Ciao..."
                   />
                 </div>
               </div>
-              <div className="flex flex-col gap-1 items-end text-right">
+              <div className="flex flex-col gap-2 items-end text-right">
                 <input 
                   placeholder="B" 
                   value={vig.speaker2}
                   onChange={(e) => onUpdate(element.id, { ...vig, speaker2: e.target.value })}
-                  className="font-black text-[9px] uppercase bg-ink text-white px-2 py-0.5"
+                  className="font-black text-[11px] uppercase bg-white text-ink px-3 py-1 border-2 border-ink shadow-hard-sm rotate-2"
                 />
-                <div className="bubble bubble-right bg-accent-green border-2 border-border p-3 rounded-2xl flex-grow font-medium w-full">
+                <div className="bubble bubble-right bg-accent-pink border-3 border-ink p-4 shadow-hard font-black w-full text-white">
                   <textarea 
                     value={vig.text2}
                     onChange={(e) => onUpdate(element.id, { ...vig, text2: e.target.value })}
-                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm resize-none"
+                    className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm resize-none placeholder:text-white/50"
                     placeholder="Ehi..."
                   />
                 </div>
@@ -118,12 +118,12 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
       case 'sticker':
         return (
           <>
-            <div className="bento-label">Nota</div>
-            <div className="bg-accent-yellow p-5 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] border-2 border-border">
+            <div className="bento-label bg-accent-lime text-ink border-2 border-ink">Nota</div>
+            <div className="bg-accent-lime p-6 shadow-hard border-3 border-ink -rotate-1">
               <textarea
                 value={element.content}
                 onChange={(e) => onUpdate(element.id, e.target.value)}
-                className="w-full bg-transparent border-none focus:ring-0 p-0 text-ink font-mono text-xs leading-relaxed h-24 resize-none placeholder:text-ink/40"
+                className="w-full bg-transparent border-none focus:ring-0 p-0 text-ink font-mono text-sm leading-relaxed h-28 resize-none placeholder:text-ink/40 font-black"
                 placeholder="RICORDA!..."
               />
             </div>
@@ -133,12 +133,12 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
       case 'note':
         return (
           <>
-            <div className="bento-label">Approfondimento</div>
-            <div className="bg-[#EEE] p-5 border border-border/20">
+            <div className="bento-label bg-accent-cyan text-ink border-2 border-ink">Approfondimento</div>
+            <div className="bg-white p-6 border-3 border-ink shadow-hard">
               <textarea
                 value={element.content}
                 onChange={(e) => onUpdate(element.id, e.target.value)}
-                className="w-full bg-transparent border-none focus:ring-0 p-0 text-ink/70 text-sm font-medium h-24 resize-none leading-relaxed"
+                className="w-full bg-transparent border-none focus:ring-0 p-0 text-ink text-sm font-bold h-28 resize-none leading-relaxed"
                 placeholder="Dettagli aggiuntivi..."
               />
             </div>
@@ -149,12 +149,12 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
         const list = element.content as ListData;
         return (
           <>
-            <div className="bento-label">Lista</div>
-            <div className="space-y-2">
+            <div className="bento-label bg-accent-orange text-white border-2 border-ink">Lista</div>
+            <div className="space-y-3">
               {list.items.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <span className="w-5 h-5 border border-border bg-zinc-50 flex items-center justify-center text-[10px] font-black">
-                    {list.style === 'bullet' ? '•' : idx + 1}
+                <div key={idx} className="flex items-center gap-4">
+                  <span className="w-8 h-8 border-3 border-ink bg-accent-yellow flex items-center justify-center text-sm font-black shadow-hard-sm">
+                    {list.style === 'bullet' ? '★' : idx + 1}
                   </span>
                   <input
                     value={item}
@@ -163,13 +163,13 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
                       newItems[idx] = e.target.value;
                       onUpdate(element.id, { ...list, items: newItems });
                     }}
-                    className="flex-grow bg-transparent border-none focus:ring-0 p-0 text-sm font-medium text-ink"
+                    className="flex-grow bg-transparent border-none focus:ring-0 p-0 text-sm font-black text-ink border-b-3 border-dotted border-ink/20 focus:border-ink"
                     placeholder="Aggiungi item..."
                   />
                   {idx === list.items.length - 1 && item && (
                     <button 
                       onClick={() => onUpdate(element.id, { ...list, items: [...list.items, ''] })}
-                      className="text-stone-300 hover:text-ink"
+                      className="w-8 h-8 bg-accent-lime border-3 border-ink font-black shadow-hard-sm"
                     >
                       +
                     </button>
@@ -184,13 +184,13 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
         const table = element.content as TableData;
         return (
           <>
-            <div className="bento-label">Tabella</div>
-            <div className="overflow-x-auto pt-2">
-              <table className="w-full border-collapse border-2 border-border">
+            <div className="bento-label bg-accent-cyan text-ink border-2 border-ink">Tabella</div>
+            <div className="overflow-x-auto pt-4">
+              <table className="w-full border-collapse border-4 border-ink shadow-hard">
                 <thead>
                   <tr>
                     {table.headers.map((h, i) => (
-                      <th key={i} className="border border-border p-2 bg-[#F0F0F0]">
+                      <th key={i} className="border-3 border-ink p-3 bg-accent-cyan">
                         <input 
                           value={h} 
                           onChange={(e) => {
@@ -198,24 +198,24 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
                             newH[i] = e.target.value;
                             onUpdate(element.id, { ...table, headers: newH });
                           }}
-                          className="w-full bg-transparent border-none focus:ring-0 p-0 text-center font-black text-[10px] uppercase tracking-widest overflow-hidden"
+                          className="w-full bg-transparent border-none focus:ring-0 p-0 text-center font-black text-xs uppercase tracking-widest"
                         />
                       </th>
                     ))}
-                    <th className="w-8 border border-border">
+                    <th className="w-10 border-3 border-ink bg-ink text-white">
                       <button onClick={() => {
                           const newH = [...table.headers, '?'];
                           const newRows = table.rows.map(r => [...r, '']);
                           onUpdate(element.id, { ...table, headers: newH, rows: newRows });
-                      }} className="text-ink/20">+</button>
+                      }} className="w-full h-full font-black">+</button>
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-white">
                   {table.rows.map((row, ri) => (
-                    <tr key={ri}>
+                    <tr key={ri} className="hover:bg-accent-yellow/5">
                       {row.map((cell, ci) => (
-                        <td key={ci} className="border border-border p-2">
+                        <td key={ci} className="border-3 border-ink p-3">
                           <input 
                             value={cell}
                             onChange={(e) => {
@@ -223,19 +223,29 @@ export function ElementRenderer({ element, onUpdate, onRemove, isEditing }: Elem
                               newRows[ri][ci] = e.target.value;
                               onUpdate(element.id, { ...table, rows: newRows });
                             }}
-                            className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-medium"
+                            className="w-full bg-transparent border-none focus:ring-0 p-0 text-sm font-bold"
                           />
                         </td>
                       ))}
-                      <td className="border border-border"></td>
+                      <td className="border-3 border-ink text-center">
+                         <button 
+                           onClick={() => {
+                             const newRows = table.rows.filter((_, i) => i !== ri);
+                             onUpdate(element.id, { ...table, rows: newRows });
+                           }}
+                           className="text-ink/20 hover:text-red-500 font-black"
+                         >
+                           ×
+                         </button>
+                      </td>
                     </tr>
                   ))}
                   <tr>
-                    <td colSpan={table.headers.length + 1} className="text-center p-1 border border-border">
+                    <td colSpan={table.headers.length + 1} className="text-center p-2 border-3 border-ink bg-zinc-50">
                         <button onClick={() => {
                           const newRows = [...table.rows, Array(table.headers.length).fill('')];
                           onUpdate(element.id, { ...table, rows: newRows });
-                        }} className="text-ink/20 text-xs">+</button>
+                        }} className="font-black text-ink uppercase text-[10px] tracking-widest">+ Aggiungi Riga</button>
                     </td>
                   </tr>
                 </tbody>

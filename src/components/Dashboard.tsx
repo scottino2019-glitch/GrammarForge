@@ -44,71 +44,49 @@ export default function Dashboard({ user, publicCreations, onOpen, onCreate }: D
   };
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-12">
       {/* Hero */}
-      <section className="relative overflow-hidden py-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="space-y-4">
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-[10px] font-black uppercase tracking-[0.3em] text-accent-red"
-            >
-              Creative Laboratory
-            </motion.div>
-            <motion.h1 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-7xl md:text-9xl font-black tracking-tighter text-ink leading-[0.8] uppercase"
-            >
-              Grammar<br />Forge <span className="text-transparent" style={{ WebkitTextStroke: '2px #1A1A1A' }}>Studio</span>
-            </motion.h1>
-          </div>
-          
-          <div className="max-w-xs text-ink/60 text-sm font-medium leading-relaxed border-l-2 border-border/10 pl-6 pb-2">
-            Progetta layout bento eleganti per le tue lezioni. 
-            Uno strumento professionale per educatori digitali.
-          </div>
-        </div>
+      <section className="text-center py-12">
+        <motion.h1 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-6xl md:text-8xl font-black tracking-tighter text-ink leading-[0.85] uppercase"
+        >
+          GrammarForge <br /> <span className="text-transparent" style={{ WebkitTextStroke: '2px #1A1A1A' }}>Studio</span>
+        </motion.h1>
+        <p className="mt-8 text-ink/60 max-w-xl mx-auto text-lg font-medium">
+          Il tuo laboratorio creativo per la grammatica.
+          Progetta bento-layout eleganti e condividili con il mondo.
+        </p>
       </section>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* User Creations */}
-        <section className="xl:col-span-12 space-y-8">
-          <div className="flex items-center justify-between border-b-2 border-border pb-6">
-            <div className="flex items-baseline gap-4">
-              <h2 className="font-black uppercase text-2xl tracking-tighter flex items-center gap-3">
-                <FileText className="text-ink" size={24} /> I miei progetti
-              </h2>
-              <span className="text-[11px] font-black uppercase tracking-widest text-ink/20">{myCreations.length} totali</span>
-            </div>
-            {user && myCreations.length > 0 && (
-              <button 
-                onClick={onCreate}
-                className="bg-ink text-white px-6 py-2 border-2 border-border font-bold text-[10px] uppercase hover:bg-zinc-800 flex items-center gap-2"
-              >
-                Nuovo Progetto <Plus size={14} />
-              </button>
-            )}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-b-2 border-border pb-4">
+            <h2 className="font-black uppercase text-xs tracking-widest flex items-center gap-2">
+              <FileText className="text-ink" size={16} /> I miei progetti
+            </h2>
+            <span className="text-[10px] font-black uppercase tracking-widest text-ink/30">{myCreations.length}</span>
           </div>
 
           {!user ? (
-            <div className="bg-white border-2 border-border p-20 text-center shadow-[8px_8px_0px_0px_rgba(26,26,26,1)]">
-              <p className="text-ink/40 text-xs font-black uppercase tracking-[0.2em]">Accedi per iniziare a creare</p>
+            <div className="bg-white border-2 border-border p-12 text-center">
+              <p className="text-ink/40 text-sm font-bold uppercase tracking-widest">Accedi per creare</p>
             </div>
           ) : myCreations.length === 0 ? (
-            <div className="bg-white border-2 border-border p-20 text-center space-y-6 shadow-[8px_8px_0px_0px_rgba(26,26,26,1)]">
-              <p className="text-ink/30 text-xs font-black uppercase tracking-[0.2em]">Il tuo archivio è ancora vuoto</p>
+            <div className="bg-white border-2 border-border p-12 text-center space-y-4">
+              <p className="text-ink/40 text-sm font-bold uppercase tracking-widest">Nessun progetto trovato</p>
               <button 
                 onClick={onCreate}
-                className="bg-accent-yellow text-ink px-8 py-3 border-2 border-border font-black text-xs uppercase hover:bg-yellow-400 flex items-center gap-2 mx-auto shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] active:shadow-none translate-x-[-2px] translate-y-[-2px] active:translate-x-0 active:translate-y-0"
+                className="bg-ink text-white px-6 py-2 border-2 border-border font-bold text-xs uppercase hover:bg-zinc-800 flex items-center gap-2 mx-auto"
               >
-                Inizia ora <ArrowRight size={14} />
+                Crea il primo <ArrowRight size={14} />
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-4">
               {myCreations.map((page) => (
                 <CreationCard 
                   key={page.id} 
@@ -123,20 +101,20 @@ export default function Dashboard({ user, publicCreations, onOpen, onCreate }: D
         </section>
 
         {/* Community */}
-        <section className="xl:col-span-12 space-y-8 pt-12 border-t-2 border-border/5">
-          <div className="flex items-baseline gap-4 border-b-2 border-border/10 pb-6">
-            <h2 className="font-black uppercase text-2xl tracking-tighter flex items-center gap-3">
-              <Globe className="text-ink/40" size={24} /> Community Feed
+        <section className="space-y-6">
+          <div className="flex items-center justify-between border-b-2 border-border pb-4">
+            <h2 className="font-black uppercase text-xs tracking-widest flex items-center gap-2">
+              <Globe className="text-ink" size={16} /> Community
             </h2>
-            <span className="text-[11px] font-black uppercase tracking-widest text-ink/20">{publicCreations.length} bento condivisi</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-ink/30">{publicCreations.length}</span>
           </div>
 
           {publicCreations.length === 0 ? (
-            <div className="p-20 text-center text-ink/20 text-xs font-black uppercase tracking-[0.2em] border-2 border-dashed border-border/10">
-              In attesa di nuove ispirazioni
+            <div className="p-12 text-center text-ink/40 text-sm font-bold uppercase tracking-widest">
+              Ancora nulla da mostrare
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {publicCreations.map((page) => (
                 <CreationCard key={page.id} page={page} onClick={() => onOpen(page)} />
               ))}
@@ -199,50 +177,39 @@ const CreationCard: FC<CreationCardProps> = ({
 }) => {
   return (
     <motion.div 
-      whileHover={{ y: -4, shadow: 'none' }}
-      className="bg-white group border-2 border-border p-6 hover:bg-bg transition-all flex flex-col gap-6 shadow-[6px_6px_0px_0px_rgba(26,26,26,1)] translate-x-[-2px] translate-y-[-2px] active:translate-x-0 active:translate-y-0"
+      whileHover={{ y: -2 }}
+      className="bg-white group border-2 border-border p-5 hover:bg-bg transition-all flex items-start gap-4 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] hover:shadow-none translate-x-[-2px] translate-y-[-2px] active:translate-x-0 active:translate-y-0"
     >
-      <div className="flex justify-between items-start">
-        <div 
-          onClick={onClick}
-          className="w-12 h-12 bg-ink flex-shrink-0 flex items-center justify-center text-white cursor-pointer shadow-[3px_3px_0px_0px_rgba(255,213,79,1)]"
-        >
-          <FileText size={24} />
+      <div 
+        onClick={onClick}
+        className="w-10 h-10 bg-ink flex-shrink-0 flex items-center justify-center text-white cursor-pointer"
+      >
+        <FileText size={20} />
+      </div>
+      <div className="flex-grow min-w-0 cursor-pointer" onClick={onClick}>
+        <h3 className="font-black uppercase text-xs tracking-tight text-ink truncate">{page.title}</h3>
+        <p className="text-[11px] font-medium text-ink/60 truncate mt-1 lowercase">{page.description || 'no description'}</p>
+        <div className="flex items-center gap-4 mt-3 text-[9px] font-black uppercase tracking-widest text-ink/30">
+          <span className="flex items-center gap-1 shrink-0">
+            <UserIcon size={9} /> {page.authorName}
+          </span>
+          <span className="flex items-center gap-1 whitespace-nowrap">
+            <Clock size={9} /> {page.updatedAt?.toDate?.()?.toLocaleDateString() || 'just now'}
+          </span>
         </div>
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          {showDelete && (
-            <button 
-              onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
-              className="p-2 text-ink/20 hover:text-red-500 transition-colors"
-              title="Elimina"
-            >
-              <Trash2 size={16} />
-            </button>
-          )}
+      </div>
+      <div className="flex flex-col gap-2">
+        {showDelete && (
           <button 
-            onClick={onClick}
-            className="p-2 text-ink/20 hover:text-ink transition-colors"
+            onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
+            className="p-1.5 text-ink/20 hover:text-red-600 transition-colors"
           >
-            <ArrowRight size={18} />
+            <Trash2 size={16} />
           </button>
-        </div>
-      </div>
-
-      <div className="space-y-2 cursor-pointer" onClick={onClick}>
-        <h3 className="font-black uppercase text-sm tracking-tight text-ink leading-tight">{page.title}</h3>
-        <p className="text-[11px] font-medium text-ink/50 line-clamp-2 min-h-[2.5rem] leading-relaxed italic">{page.description || 'Nessuna descrizione fornita per questo bento-progetto.'}</p>
-      </div>
-
-      <div className="pt-4 border-t border-border/10 flex items-center justify-between mt-auto">
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 bg-stone-100 rounded-full flex items-center justify-center border border-border/10">
-            <UserIcon size={10} className="text-ink/30" />
-          </div>
-          <span className="text-[9px] font-black uppercase tracking-wider text-ink/40">{page.authorName}</span>
-        </div>
-        <span className="text-[8px] font-bold text-ink/20 flex items-center gap-1 uppercase">
-          <Clock size={8} /> {page.updatedAt?.toDate?.()?.toLocaleDateString() || 'Nuovo'}
-        </span>
+        )}
+        <button onClick={onClick} className="p-1.5 text-ink/20 group-hover:text-ink transition-colors">
+          <ArrowRight size={14} />
+        </button>
       </div>
     </motion.div>
   );

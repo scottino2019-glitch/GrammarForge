@@ -163,31 +163,37 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
         <meta charset="UTF-8">
         <title>${page.title}</title>
         <style>
-          body { font-family: sans-serif; background: #F4F4F2; color: #1A1A1A; padding: 40px; }
-          .container { max-width: 900px; margin: 0 auto; }
-          h1 { text-transform: uppercase; letter-spacing: -2px; font-size: 3rem; margin-bottom: 10px; }
-          p.desc { color: #666; font-size: 1.2rem; margin-bottom: 40px; }
-          .grid { display: grid; grid-template-columns: ${page.layout === 'double' ? '1fr 1fr' : '1fr'}; gap: 20px; }
-          .card { background: white; border: 2px solid #1A1A1A; padding: 20px; position: relative; }
-          .label { background: #1A1A1A; color: white; display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; }
-          .example { border-left: 4px solid #1A1A1A; padding-left: 15px; font-style: italic; font-weight: bold; }
-          .sticker { background: #FFD54F; padding: 20px; border: 2px solid #1A1A1A; font-family: monospace; }
-          .vignette { display: flex; flex-direction: column; gap: 10px; }
-          .bubble { padding: 10px; border: 2px solid #1A1A1A; border-radius: 15px; font-weight: 500; }
-          .speaker { font-weight: 900; font-size: 10px; text-transform: uppercase; }
-          table { width: 100%; border-collapse: collapse; border: 2px solid #1A1A1A; }
-          th, td { border: 1px solid #1A1A1A; padding: 10px; text-align: left; }
-          th { background: #F0F0F0; font-size: 10px; text-transform: uppercase; }
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap');
+          body { font-family: 'Inter', sans-serif; background: white; color: black; padding: 60px; margin: 0; }
+          .container { max-width: 900px; margin: 0 auto; border: 4px solid black; padding: 40px; box-shadow: 12px 12px 0px 0px black; position: relative; overflow: hidden; }
+          .dots { position: fixed; inset: 0; background-image: radial-gradient(black 1px, transparent 1px); background-size: 24px 24px; z-index: -1; opacity: 0.1; }
+          h1 { text-transform: uppercase; letter-spacing: -4px; font-size: 5rem; line-height: 0.8; margin-bottom: 20px; background: #FFFF00; display: inline-block; padding: 0 10px; border: 3px solid black; transform: rotate(-1deg); box-shadow: 6px 6px 0px 0px black; }
+          p.desc { color: black; font-size: 1.5rem; font-weight: 900; margin-bottom: 50px; text-transform: uppercase; }
+          .grid { display: grid; grid-template-columns: ${page.layout === 'double' ? '1fr 1fr' : '1fr'}; gap: 30px; }
+          .card { background: white; border: 3px solid black; padding: 30px; position: relative; box-shadow: 6px 6px 0px 0px black; }
+          .label { background: black; color: white; display: inline-block; padding: 4px 12px; font-size: 11px; font-weight: 900; text-transform: uppercase; position: absolute; top: -15px; left: 20px; border: 2px solid black; }
+          .example { border-left: 8px solid black; padding-left: 20px; font-style: italic; font-weight: 900; font-size: 1.2rem; background: rgba(255, 255, 0, 0.1); py: 10px; }
+          .sticker { background: #00FF00; padding: 25px; border: 3px solid black; font-family: monospace; transform: rotate(-1deg); box-shadow: 6px 6px 0px 0px black; font-weight: 900; }
+          .vignette { display: flex; flex-direction: column; gap: 20px; }
+          .bubble { padding: 15px; border: 3px solid black; font-weight: 900; box-shadow: 4px 4px 0px 0px black; }
+          .speaker { font-weight: 900; font-size: 11px; text-transform: uppercase; background: black; color: white; padding: 2px 8px; display: inline-block; margin-bottom: 5px; }
+          table { width: 100%; border-collapse: collapse; border: 4px solid black; box-shadow: 6px 6px 0px 0px black; }
+          th, td { border: 2px solid black; padding: 15px; text-align: left; font-weight: 700; }
+          th { background: #00FFFF; font-size: 12px; text-transform: uppercase; font-weight: 900; }
+          ul { list-style: none; padding: 0; }
+          li { margin-bottom: 10px; font-weight: 900; display: flex; gap: 10px; align-items: center; }
+          li::before { content: '★'; color: #FFFF00; -webkit-text-stroke: 1px black; font-size: 1.2rem; }
         </style>
       </head>
       <body>
+        <div class="dots"></div>
         <div class="container">
           <h1>${page.title}</h1>
           <p class="desc">${page.description}</p>
           <div class="grid">
             ${page.elements.map(el => `
               <div class="card">
-                <div class="label">${el.type.replace('-', ' ')}</div>
+                <div class="label" style="background: ${getLabelColor(el.type)}">${el.type.replace('-', ' ')}</div>
                 ${renderElementHTML(el)}
               </div>
             `).join('')}
@@ -205,10 +211,27 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
     URL.revokeObjectURL(url);
   };
 
+  const getLabelColor = (type: string) => {
+    switch(type) {
+      case 'vignette': return '#FF00FF';
+      case 'sticker': return '#00FF00';
+      case 'example-single':
+      case 'example-multi': return '#FFFF00';
+      case 'table':
+      case 'note':
+      case 'text-box':
+      case 'list': return '#00FFFF';
+      default: return 'black';
+    }
+  };
+
   const renderElementHTML = (el: GrammarElement) => {
     switch(el.type) {
-      case 'text-box': return `<p>${el.content}</p>`;
+      case 'text-box': return `<p style="font-weight: 900;">${el.content}</p>`;
       case 'example-single': return `<div class="example">${el.content}</div>`;
+      case 'example-multi': 
+        const exs = Array.isArray(el.content) ? el.content : [];
+        return `<div style="display: flex; flex-direction: column; gap: 10px;">${exs.map(ex => `<div class="example">${ex}</div>`).join('')}</div>`;
       case 'sticker': return `<div class="sticker">${el.content}</div>`;
       case 'table': 
         const t = el.content as TableData;
@@ -222,13 +245,15 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
         const v = el.content as VignetteData;
         return `
           <div class="vignette">
-            <div><span class="speaker">${v.speaker1}</span><div class="bubble" style="background: #D1E9FF">${v.text1}</div></div>
-            <div style="text-align: right;"><span class="speaker">${v.speaker2}</span><div class="bubble" style="background: #D4EDDA">${v.text2}</div></div>
+            <div><span class="speaker">${v.speaker1}</span><div class="bubble" style="background: #00FFFF">${v.text1}</div></div>
+            <div style="text-align: right;"><span class="speaker">${v.speaker2}</span><div class="bubble" style="background: #FF00FF; color: white;">${v.text2}</div></div>
           </div>
         `;
       case 'list':
         const l = el.content as ListData;
         return `<ul>${l.items.map(item => `<li>${item}</li>`).join('')}</ul>`;
+      case 'note':
+        return `<div style="border: 2px solid black; padding: 15px; background: #EFEFEF; font-weight: 700;">${el.content}</div>`;
       default: return el.content;
     }
   };
@@ -319,6 +344,13 @@ export default function Editor({ page: initialPage, user, onClose }: EditorProps
               >
                 <Download size={18} strokeWidth={3} className={exporting ? 'animate-bounce' : ''} /> 
                 <span className="hidden md:inline">{exporting ? 'Wait...' : 'PDF'}</span>
+              </button>
+              <button 
+                onClick={exportHTML} 
+                disabled={exporting}
+                className="p-3 border-3 border-ink bg-white hover:bg-accent-cyan transition-all flex items-center gap-2 font-black uppercase text-[11px] shadow-hard-sm active:shadow-none"
+              >
+                <FileCode size={18} strokeWidth={3} /> <span className="hidden md:inline">HTML</span>
               </button>
             </div>
 
